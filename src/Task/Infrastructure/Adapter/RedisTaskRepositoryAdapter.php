@@ -30,7 +30,7 @@ class RedisTaskRepositoryAdapter implements TaskRepositoryPort
         $key = 'tasks.' . $id;
         $itemStr = $redis->get($key);
         $this->redisPool->put($redis);
-        return $itemStr === null ? null : Task::makeFromArr(json_decode($itemStr,true));
+        return $itemStr ? Task::makeFromArr(json_decode($itemStr,true)) : null ;
     }
 
     public function all(): array
