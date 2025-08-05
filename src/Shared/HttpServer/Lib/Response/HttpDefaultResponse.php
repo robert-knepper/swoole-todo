@@ -18,6 +18,18 @@ trait HttpDefaultResponse
         ]));
     }
 
+    protected function success(Response $response, int $statusCode = 200, array $data = [])
+    {
+        $response->status($statusCode);
+        $response->setHeader('Content-Type', 'application/json');
+        $response->end(json_encode([
+            'data' => $data,
+            'message' => HttpStatus::label($statusCode),
+            'status' => $statusCode,
+            'success' => true,
+        ]));
+    }
+
     protected function errorWithMessage(string $message, int $statusCode, Response $response, array $data = [])
     {
         $response->status($statusCode);
@@ -29,4 +41,18 @@ trait HttpDefaultResponse
             'success' => false,
         ]));
     }
+
+    protected function successWithData(array $data, Response $response, int $statusCode = 200)
+    {
+        $response->status($statusCode);
+        $response->setHeader('Content-Type', 'application/json');
+        $response->end(json_encode([
+            'data' => $data,
+            'message' => HttpStatus::label($statusCode),
+            'status' => $statusCode,
+            'success' => true,
+        ]));
+    }
+
+
 }

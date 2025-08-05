@@ -2,6 +2,8 @@
 
 namespace App\Task\Application\Service;
 
+use App\Shared\HttpServer\Lib\Response\HttpDefaultResponse;
+use App\Shared\HttpServer\Lib\Response\HttpStatus;
 use App\Task\Application\Port\TaskRepositoryPort;
 use App\Task\Domain\Task;
 use App\User\Application\Dto\UserDto;
@@ -10,6 +12,8 @@ use Swoole\Http\Response;
 
 class TaskService
 {
+    use HttpDefaultResponse;
+
     public function __construct(private TaskRepositoryPort $taskRepositoryPort)
     {
     }
@@ -29,12 +33,14 @@ class TaskService
 
     public function getTask(Request $request, Response $response)
     {
-        $task = $this->taskRepositoryPort->findById($request->get['id']);
-        if ($task != null){
-            $response->end(json_encode($task->toArray()));
-        }
+        if (!(isset($request->get['id']) && is_numeric($request->get['id'])))
+            return $this->errorWithMessage('id param not valid', HttpStatus::BAD_REQUEST, $response);
 
-        $response->end(json_encode([]));
+        $task = $this->taskRepositoryPort->findById($request->get['id']);
+        if ($task === null)
+            return $this->error(HttpStatus::NOT_FOUND, $response);
+
+        return $this->successWithData($task->toArray(), $response);
     }
 
     public function getAllTasks(Request $request, Response $response)
