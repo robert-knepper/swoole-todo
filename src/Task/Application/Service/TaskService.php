@@ -20,6 +20,18 @@ class TaskService
 
     public function createTask(Request $request, Response $response)
     {
+        if (!(isset($request->post['title'])
+            && is_string($request->post['title'])
+            && strlen($request->post['title']) < 150
+            && strlen($request->post['title']) != 0))
+            return $this->errorWithMessage('title is not valid', HttpStatus::BAD_REQUEST, $response);
+
+        if (!(isset($request->post['description'])
+            && is_string($request->post['description'])
+            && strlen($request->post['description']) < 500
+            && strlen($request->post['description']) != 0))
+            return $this->errorWithMessage('description is not valid', HttpStatus::BAD_REQUEST, $response);
+
         $task = new Task(
             rand(1200, 90000),
             $request->post['title'] ?? '',
@@ -28,7 +40,7 @@ class TaskService
             time()
         );
         $this->taskRepositoryPort->save($task);
-        $response->end(json_encode($task->toArray()));
+        $this->successWithData($task->toArray(), $response, HttpStatus::CREATED);
     }
 
     public function getTask(Request $request, Response $response)
@@ -40,7 +52,7 @@ class TaskService
         if ($task === null)
             return $this->error(HttpStatus::NOT_FOUND, $response);
 
-        return $this->successWithData($task->toArray(), $response);
+        $this->successWithData($task->toArray(), $response);
     }
 
     public function getAllTasks(Request $request, Response $response)

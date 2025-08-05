@@ -18,7 +18,7 @@ class RedisTaskRepositoryAdapter implements TaskRepositoryPort
         $redis = $this->redisPool->get();
 
         $key = 'tasks.' . $task->id;
-        $redis->set($key, json_encode($task), ['EX' => 60]); // by seconds.
+        $redis->set($key, json_encode($task), ['EX' => 200]); // by seconds.
         assert($redis->get($key) === 'dummy', 'The value stored in Redis should be "dummy".');
         $this->redisPool->put($redis);
         $this->tasks[$task->id] = $task;
