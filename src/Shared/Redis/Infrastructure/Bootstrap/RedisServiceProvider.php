@@ -3,7 +3,7 @@
 namespace App\Shared\Redis\Infrastructure\Bootstrap;
 
 use App\Shared\App\Lib\ServiceProvider\BaseServiceProvider;
-use Swoole\Database\RedisConfig;
+use App\Shared\Redis\Lib\RedisPoolMaker;
 use Swoole\Database\RedisPool;
 
 class RedisServiceProvider extends BaseServiceProvider
@@ -21,13 +21,7 @@ class RedisServiceProvider extends BaseServiceProvider
         $pass = env('REDIS_PASS', null);
         $db = env('REDIS_DB_NUM', 0);
 
-        $config = (new RedisConfig())
-            ->withHost($host)
-            ->withPort($port)
-            ->withAuth($pass)
-            ->withDbIndex($db);
-
-        $pool = new RedisPool($config, 32);
+        $pool = RedisPoolMaker::make($host, $port, $pass, $db);
         $this->container->bind(RedisPool::class, $pool);
     }
 
