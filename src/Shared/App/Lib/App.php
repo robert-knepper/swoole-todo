@@ -43,7 +43,7 @@ class App
         return $this->registry[$key];
     }
 
-    public function getRegisterCommand(): RegisterCommand
+    public function registerCommand(): RegisterCommand
     {
         return $this->registerCommand;
     }

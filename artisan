@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/bin/entry_point.php';
 $consoleApplication = new \Symfony\Component\Console\Application();
-foreach (APP->getRegisterCommand()->getCommands() as $command){
+foreach (APP->registerCommand()->getCommands() as $command){
     $consoleApplication->add(new $command);
 }
 $consoleApplication->run();

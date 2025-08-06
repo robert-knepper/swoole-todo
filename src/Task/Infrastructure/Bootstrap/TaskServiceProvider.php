@@ -2,10 +2,14 @@
 
 namespace App\Task\Infrastructure\Bootstrap;
 
+use App\Shared\App\Lib\Console\RegisterCommand;
 use App\Shared\App\Lib\ServiceProvider\BaseServiceProvider;
 use App\Shared\HttpServer\Lib\Router;
 use App\Shared\Mtproto\TLClassStore;
 use App\Shared\Mtproto\TLObject;
+use App\Task\Application\Command\CreateTaskCommand;
+use App\Task\Application\Command\GetAllTaskCommand;
+use App\Task\Application\Command\GetTaskCommand;
 use App\Task\Application\Service\TaskService;
 use App\Task\Application\Service\TaskServiceMtproto;
 use App\Task\Infrastructure\Adapter\InMemoryTaskRepositoryAdapter;
@@ -19,8 +23,16 @@ class TaskServiceProvider extends BaseServiceProvider
 
     public function register(): void
     {
+        $this->registerCommands();
         $this->registerService();
         $this->registerRoutes($this->container->getRouter());
+    }
+
+    private function registerCommands() : void
+    {
+        $this->container->registerCommand()->add(CreateTaskCommand::class);
+        $this->container->registerCommand()->add(GetTaskCommand::class);
+        $this->container->registerCommand()->add(GetAllTaskCommand::class);
     }
 
     private function registerService() : void

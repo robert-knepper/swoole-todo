@@ -11,8 +11,8 @@ class HttpServerServiceProvider extends BaseServiceProvider
 {
     public function register(): void
     {
-        $this->container->getRegisterCommand()->add(RouteListCommand::class);
-        $this->container->getRegisterCommand()->add(StartServerCommand::class);
+        $this->container->registerCommand()->add(RouteListCommand::class);
+        $this->container->registerCommand()->add(StartServerCommand::class);
     }
 
 }
