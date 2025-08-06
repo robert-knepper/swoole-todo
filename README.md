@@ -1,3 +1,12 @@
+### Install
+```shell
+sudo php install-todo.php
+```
+From now on you have access to Commands: 
+```shell
+todo list
+```
+
 ### Run all Tests
 ```shell
 vendor/bin/phpunit
