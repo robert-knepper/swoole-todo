@@ -5,6 +5,7 @@ namespace Tests\Task;
 use App\Shared\HttpServer\Lib\Response\HttpStatus;
 use App\Shared\HttpServer\Lib\Test\CoroutineTest;
 use App\Task\Application\Service\TaskService;
+use App\Task\Domain\Task;
 use PHPUnit\Framework\TestCase;
 use Swoole\Http\Request;
 
@@ -14,18 +15,18 @@ class TaskServiceTest extends TestCase
 
     public function test_create_task()
     {
-        /**
-         * @var TaskService $service
-         */
-        $service = APP->get(TaskService::class);
-        $request = new Request();
+        $this->runTestOnCoroutine(function () {
+            /**
+             * @var TaskService $service
+             */
+            $service = APP->get(TaskService::class);
+            $request = new Request();
 
-        $result = $service->createTask($request);
+            $result = $service->createTask($request);
 
-        // check validation
-        $this->assertEquals(HttpStatus::BAD_REQUEST, $result['code']);
+            // check validation
+            $this->assertEquals(HttpStatus::BAD_REQUEST, $result['code']);
 
-        $this->runTestOnCoroutine(function () use ($service, $request) {
             $request->post = [
                 'title' => "foo",
                 'description' => "bar",
@@ -69,6 +70,39 @@ class TaskServiceTest extends TestCase
             $result = $service->getTask($request);
             $this->assertEquals(HttpStatus::OK, $result['code']);
             $this->assertEquals('foo', $result['data']['title']);
+        });
+    }
+
+    public function test_get_all_task()
+    {
+        $this->runTestOnCoroutine(function () {
+            /**
+             * @var TaskService $service
+             */
+            $service = APP->get(TaskService::class);
+            $request = new Request();
+
+
+            // create task
+            $request->post = [
+                'title' => "foo",
+                'description' => "bar",
+            ];
+            $service->createTask($request);
+            $service->createTask($request);
+            $service->createTask($request);
+
+
+            // get task
+            $result = $service->getAllTasks($request);
+            $this->assertEquals(HttpStatus::OK, $result['code']);
+
+            $this->assertTrue(count($result['data']) > 2);
+            /**
+             * @var Task[] $tasks
+             */
+            $tasks = $result['data'];
+            $this->assertEquals('foo', $tasks[0]->title);
         });
     }
 }

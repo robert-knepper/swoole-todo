@@ -19,4 +19,4 @@ foreach ($providers as $provider) {
 // boot modules
 APP->boot();
 
-unset($providers);
+unset($providers,$envName);

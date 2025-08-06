@@ -59,6 +59,6 @@ class TaskService
     public function getAllTasks(Request $request)
     {
         $tasks = $this->taskRepositoryPort->all();
-        $this->successWithData($tasks);
+        return $this->successWithData($tasks);
     }
 }
