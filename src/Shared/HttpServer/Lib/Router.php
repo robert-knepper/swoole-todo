@@ -3,6 +3,8 @@
 namespace App\Shared\HttpServer\Lib;
 
 use App\Shared\App\Lib\App;
+use App\Shared\HttpServer\Lib\Response\HttpDefaultResponse;
+use App\Shared\HttpServer\Lib\Response\HttpStatus;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -35,11 +37,20 @@ class Router
 
         $handler = $this->routes[$method][$path] ?? null;
 
+        // handle result
+        $response->setHeader('Content-Type', 'application/json');
         if ($handler === null) {
-            $response->status(404);
-            $response->end("404 Not Found");
+            $response->status(HTTPStatus::NOT_FOUND);
+            $response->end(json_encode([
+                    'message' => HttpStatus::label(HTTPStatus::NOT_FOUND),
+                    'code' => HTTPStatus::NOT_FOUND,
+                    'success' => false,
+
+            ]));
             return;
         }
-        $this->app->get($handler[0])->{$handler[1]}($request, $response);
+        $result = $this->app->get($handler[0])->{$handler[1]}($request);
+        $response->status($result['code']);
+        $response->end(json_encode($result));
     }
 }

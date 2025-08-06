@@ -6,52 +6,44 @@ use Swoole\Http\Response;
 
 trait HttpDefaultResponse
 {
-    protected function error(int $statusCode, Response $response, array $data = [])
+    protected function error(int $statusCode, array $data = []): array
     {
-        $response->status($statusCode);
-        $response->setHeader('Content-Type', 'application/json');
-        $response->end(json_encode([
+        return [
             'data' => $data,
             'message' => HttpStatus::label($statusCode),
-            'status' => $statusCode,
+            'code' => $statusCode,
             'success' => false,
-        ]));
+        ];
     }
 
-    protected function success(Response $response, int $statusCode = 200, array $data = [])
+    protected function success(int $statusCode = 200, array $data = []): array
     {
-        $response->status($statusCode);
-        $response->setHeader('Content-Type', 'application/json');
-        $response->end(json_encode([
+        return [
             'data' => $data,
             'message' => HttpStatus::label($statusCode),
-            'status' => $statusCode,
+            'code' => $statusCode,
             'success' => true,
-        ]));
+        ];
     }
 
-    protected function errorWithMessage(string $message, int $statusCode, Response $response, array $data = [])
+    protected function errorWithMessage(string $message, int $statusCode, array $data = []): array
     {
-        $response->status($statusCode);
-        $response->setHeader('Content-Type', 'application/json');
-        $response->end(json_encode([
+        return [
             'data' => $data,
             'message' => $message,
-            'status' => $statusCode,
+            'code' => $statusCode,
             'success' => false,
-        ]));
+        ];
     }
 
-    protected function successWithData(array $data, Response $response, int $statusCode = 200)
+    protected function successWithData(array $data, int $statusCode = 200): array
     {
-        $response->status($statusCode);
-        $response->setHeader('Content-Type', 'application/json');
-        $response->end(json_encode([
+        return [
             'data' => $data,
             'message' => HttpStatus::label($statusCode),
-            'status' => $statusCode,
+            'code' => $statusCode,
             'success' => true,
-        ]));
+        ];
     }
 
 

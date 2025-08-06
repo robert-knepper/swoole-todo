@@ -18,19 +18,19 @@ class TaskService
     {
     }
 
-    public function createTask(Request $request, Response $response)
+    public function createTask(Request $request)
     {
         if (!(isset($request->post['title'])
             && is_string($request->post['title'])
             && strlen($request->post['title']) < 150
             && strlen($request->post['title']) != 0))
-            return $this->errorWithMessage('title is not valid', HttpStatus::BAD_REQUEST, $response);
+            return $this->errorWithMessage('title is not valid', HttpStatus::BAD_REQUEST);
 
         if (!(isset($request->post['description'])
             && is_string($request->post['description'])
             && strlen($request->post['description']) < 500
             && strlen($request->post['description']) != 0))
-            return $this->errorWithMessage('description is not valid', HttpStatus::BAD_REQUEST, $response);
+            return $this->errorWithMessage('description is not valid', HttpStatus::BAD_REQUEST);
 
         $task = new Task(
             rand(1200, 90000),
@@ -39,25 +39,26 @@ class TaskService
             false,
             time()
         );
+
         $this->taskRepositoryPort->save($task);
-        $this->successWithData($task->toArray(), $response, HttpStatus::CREATED);
+        return $this->successWithData($task->toArray(), HttpStatus::CREATED);
     }
 
-    public function getTask(Request $request, Response $response)
+    public function getTask(Request $request)
     {
         if (!(isset($request->get['id']) && is_numeric($request->get['id'])))
-            return $this->errorWithMessage('id param not valid', HttpStatus::BAD_REQUEST, $response);
+            return $this->errorWithMessage('id param not valid', HttpStatus::BAD_REQUEST);
 
         $task = $this->taskRepositoryPort->findById($request->get['id']);
         if ($task === null)
-            return $this->error(HttpStatus::NOT_FOUND, $response);
+            return $this->error(HttpStatus::NOT_FOUND);
 
-        $this->successWithData($task->toArray(), $response);
+        return $this->successWithData($task->toArray());
     }
 
-    public function getAllTasks(Request $request, Response $response)
+    public function getAllTasks(Request $request)
     {
         $tasks = $this->taskRepositoryPort->all();
-        $this->successWithData($tasks, $response);
+        $this->successWithData($tasks);
     }
 }
