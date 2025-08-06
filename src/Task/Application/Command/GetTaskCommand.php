@@ -20,7 +20,7 @@ class GetTaskCommand extends BaseCommand
 
     protected function configure()
     {
-        $this->setDescription('create task')
+        $this->setDescription('get task by id')
             ->addArgument('id', InputArgument::REQUIRED, 'task id');
     }
 

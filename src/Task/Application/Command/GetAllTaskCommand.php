@@ -20,7 +20,7 @@ class GetAllTaskCommand extends BaseCommand
 
     protected function configure()
     {
-        $this->setDescription('create task');
+        $this->setDescription('show all created tasks');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
