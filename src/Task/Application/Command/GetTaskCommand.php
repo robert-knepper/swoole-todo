@@ -3,6 +3,7 @@
 namespace App\Task\Application\Command;
 
 use App\Shared\App\Lib\Console\BaseCommand;
+use App\Shared\HttpServer\Lib\Client\Exception\ServerNotfoundException;
 use App\Shared\HttpServer\Lib\Client\HttpClient;
 use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
@@ -28,10 +29,14 @@ class GetTaskCommand extends BaseCommand
     {
         \Co\run(function () use ($input): void {
             \go(function () use ($input): void {
-                $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'));
-                $result = $client->get('/task?id=' . $input->getArgument('id'));
+                try {
+                    $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'));
+                    $result = $client->get('/task?id=' . $input->getArgument('id'));
+                    dump(json_decode($result, true));
 
-                dump(json_decode($result, true));
+                } catch (ServerNotfoundException $exception) {
+                    dump($exception->getMessage());
+                }
             });
         });
         return Command::SUCCESS;
