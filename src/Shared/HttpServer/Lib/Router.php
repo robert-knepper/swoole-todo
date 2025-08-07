@@ -51,6 +51,7 @@ class Router
         }
         $result = $this->app->get($handler[0])->{$handler[1]}($request);
         $response->status($result['code']);
+        dump($result);
         $response->end(json_encode($result));
     }
 }

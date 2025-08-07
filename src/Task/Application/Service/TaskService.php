@@ -88,7 +88,7 @@ class TaskService
         // update
         $task->title = $request->post['title'];
         $task->description = $request->post['description'];
-        $task->isDone = $request->post['isDone'];
+        $task->isDone = (bool)$request->post['isDone'];
         $this->taskRepositoryPort->update($task);
         return $this->successWithData($task->toArray());
     }

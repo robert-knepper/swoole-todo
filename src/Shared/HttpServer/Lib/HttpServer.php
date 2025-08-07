@@ -41,9 +41,4 @@ class HttpServer
         dump($uri,$request->post,'','');
     }
 
-    private function responseLogger() : void
-    {
-
-    }
-
 }

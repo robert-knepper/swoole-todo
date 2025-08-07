@@ -20,7 +20,7 @@ abstract class BaseRequestValidator
 
     protected static function isValidBool($value): bool
     {
-        return is_bool($value);
+        return is_numeric($value);
     }
 
 

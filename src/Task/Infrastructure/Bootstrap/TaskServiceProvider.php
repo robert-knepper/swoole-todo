@@ -11,6 +11,7 @@ use App\Task\Application\Command\CreateTaskCommand;
 use App\Task\Application\Command\DeleteTaskCommand;
 use App\Task\Application\Command\GetAllTaskCommand;
 use App\Task\Application\Command\GetTaskCommand;
+use App\Task\Application\Command\UpdateTaskCommand;
 use App\Task\Application\Service\TaskService;
 use App\Task\Application\Service\TaskServiceMtproto;
 use App\Task\Infrastructure\Adapter\InMemoryTaskRepositoryAdapter;
@@ -35,6 +36,7 @@ class TaskServiceProvider extends BaseServiceProvider
         $this->container->registerCommand()->add(GetTaskCommand::class);
         $this->container->registerCommand()->add(GetAllTaskCommand::class);
         $this->container->registerCommand()->add(DeleteTaskCommand::class);
+        $this->container->registerCommand()->add(UpdateTaskCommand::class);
     }
 
     private function registerService() : void
