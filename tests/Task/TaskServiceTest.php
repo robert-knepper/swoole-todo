@@ -25,17 +25,17 @@ class TaskServiceTest extends TestCase
             $result = $service->createTask($request);
 
             // check validation
-            $this->assertEquals(HttpStatus::BAD_REQUEST, $result['code']);
+            $this->assertEquals(HttpStatus::BAD_REQUEST, $result->getCode());
 
             $request->post = [
                 'title' => "foo",
                 'description' => "bar",
             ];
             $result = $service->createTask($request);
-            $task = $result['data'];
+            $task = $result->getData();
 
             // check task returned
-            $this->assertEquals(HttpStatus::CREATED, $result['code']);
+            $this->assertEquals(HttpStatus::CREATED, $result->getCode());
             $this->assertIsInt($task['id']);
             $this->assertEquals('foo', $task['title']);
             $this->assertEquals('bar', $task['description']);
@@ -59,17 +59,17 @@ class TaskServiceTest extends TestCase
 
             // create task
             $result = $service->createTask($request);
-            $task = $result['data'];
+            $task = $result->getData();
 
             // get task
             $result = $service->getTask($request);
-            $this->assertEquals(HttpStatus::BAD_REQUEST, $result['code']);
+            $this->assertEquals(HttpStatus::BAD_REQUEST, $result->getCode());
             $request->get = [
                 'id' => $task['id'],
             ];
             $result = $service->getTask($request);
-            $this->assertEquals(HttpStatus::OK, $result['code']);
-            $this->assertEquals('foo', $result['data']['title']);
+            $this->assertEquals(HttpStatus::OK, $result->getCode());
+            $this->assertEquals('foo', $result->getData()['title']);
         });
     }
 
@@ -95,13 +95,13 @@ class TaskServiceTest extends TestCase
 
             // get task
             $result = $service->getAllTasks($request);
-            $this->assertEquals(HttpStatus::OK, $result['code']);
+            $this->assertEquals(HttpStatus::OK, $result->getCode());
 
-            $this->assertTrue(count($result['data']) > 2);
+            $this->assertTrue(count($result->getData()) > 2);
             /**
              * @var Task[] $tasks
              */
-            $tasks = $result['data'];
+            $tasks = $result->getData();
             $this->assertEquals('foo', $tasks[0]->title);
         });
     }
@@ -120,25 +120,25 @@ class TaskServiceTest extends TestCase
                 'description' => "bar",
             ];
             $result = $service->createTask($request);
-            $task = $result['data'];
+            $task = $result->getData();
 
             $request->get = [
                 'id' => $task['id'],
             ];
             $result = $service->getTask($request);
-            $this->assertEquals(HttpStatus::OK, $result['code']);
+            $this->assertEquals(HttpStatus::OK, $result->getCode());
 
             $request->post = [
                 'id' => $task['id'],
             ];
             $result = $service->delete($request);
-            $this->assertEquals(HttpStatus::OK, $result['code']);
+            $this->assertEquals(HttpStatus::OK, $result->getCode());
 
             $request->get = [
                 'id' => $task['id'],
             ];
             $result = $service->getTask($request);
-            $this->assertEquals(HttpStatus::NOT_FOUND, $result['code']);
+            $this->assertEquals(HttpStatus::NOT_FOUND, $result->getCode());
         });
     }
 
@@ -160,15 +160,15 @@ class TaskServiceTest extends TestCase
                 'description' => "bar",
             ];
             $result = $service->createTask($request);
-            $task = $result['data'];
+            $task = $result->getData();
             $task['title'] = "baz";
             $task['description'] = "qux";
-            $task['isDone'] = true;
+            $task['isDone'] = 1;
 
             $request->post = $task;
             $result = $service->update($request);
-            $this->assertEquals(HttpStatus::OK, $result['code']);
-            $this->assertEquals('baz', $result['data']['title']);
+            $this->assertEquals(HttpStatus::OK, $result->getCode());
+            $this->assertEquals('baz', $result->getData()['title']);
 
             $request->get = [
                 'id' => $task['id'],
@@ -176,10 +176,10 @@ class TaskServiceTest extends TestCase
             $result = $service->getTask($request);
 
 
-            $this->assertEquals(HttpStatus::OK, $result['code']);
-            $this->assertEquals('baz', $result['data']['title']);
-            $this->assertEquals('qux', $result['data']['description']);
-            $this->assertTrue($result['data']['isDone']);
+            $this->assertEquals(HttpStatus::OK, $result->getCode());
+            $this->assertEquals('baz', $result->getData()['title']);
+            $this->assertEquals('qux', $result->getData()['description']);
+            $this->assertTrue($result->getData()['isDone']);
         });
     }
 }

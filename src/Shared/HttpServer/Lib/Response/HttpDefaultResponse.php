@@ -2,48 +2,46 @@
 
 namespace App\Shared\HttpServer\Lib\Response;
 
-use Swoole\Http\Response;
-
 trait HttpDefaultResponse
 {
-    protected function error(int $statusCode, array $data = []): array
+    protected function error(int $statusCode, array $data = []): DefaultResponseDTO
     {
-        return [
-            'data' => $data,
-            'message' => HttpStatus::label($statusCode),
-            'code' => $statusCode,
-            'success' => false,
-        ];
+        return new DefaultResponseDTO(
+            $data,
+            $statusCode,
+            false,
+            HttpStatus::label($statusCode)
+        );
     }
 
-    protected function success(int $statusCode = 200, array $data = []): array
+    protected function success(int $statusCode = 200, array $data = []): DefaultResponseDTO
     {
-        return [
-            'data' => $data,
-            'message' => HttpStatus::label($statusCode),
-            'code' => $statusCode,
-            'success' => true,
-        ];
+        return new DefaultResponseDTO(
+            $data,
+            $statusCode,
+            true,
+            HttpStatus::label($statusCode)
+        );
     }
 
-    protected function errorWithMessage(string $message, int $statusCode, array $data = []): array
+    protected function errorWithMessage(string $message, int $statusCode, array $data = []): DefaultResponseDTO
     {
-        return [
-            'data' => $data,
-            'message' => $message,
-            'code' => $statusCode,
-            'success' => false,
-        ];
+        return new DefaultResponseDTO(
+            $data,
+            $statusCode,
+            false,
+            $message
+        );
     }
 
-    protected function successWithData(array $data, int $statusCode = 200): array
+    protected function successWithData(array $data, int $statusCode = 200): DefaultResponseDTO
     {
-        return [
-            'data' => $data,
-            'message' => HttpStatus::label($statusCode),
-            'code' => $statusCode,
-            'success' => true,
-        ];
+        return new DefaultResponseDTO(
+            $data,
+            $statusCode,
+            true,
+            HttpStatus::label($statusCode)
+        );
     }
 
 

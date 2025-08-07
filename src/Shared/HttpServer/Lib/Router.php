@@ -3,6 +3,7 @@
 namespace App\Shared\HttpServer\Lib;
 
 use App\Shared\App\Lib\App;
+use App\Shared\HttpServer\Lib\Response\DefaultResponseDTO;
 use App\Shared\HttpServer\Lib\Response\HttpDefaultResponse;
 use App\Shared\HttpServer\Lib\Response\HttpStatus;
 use Swoole\Http\Request;
@@ -30,7 +31,7 @@ class Router
         return $this->routes;
     }
 
-    public function dispatch(Request $request, Response $response): void
+    public function dispatch(Request $request, Response $response): DefaultResponseDTO
     {
         $method = strtoupper($request->server['request_method'] ?? 'GET');
         $path = $request->server['request_uri'] ?? '/';
@@ -41,17 +42,22 @@ class Router
         $response->setHeader('Content-Type', 'application/json');
         if ($handler === null) {
             $response->status(HTTPStatus::NOT_FOUND);
-            $response->end(json_encode([
-                    'message' => HttpStatus::label(HTTPStatus::NOT_FOUND),
-                    'code' => HTTPStatus::NOT_FOUND,
-                    'success' => false,
-
-            ]));
-            return;
+            $responseDTO = new DefaultResponseDTO(
+                [],
+                HTTPStatus::NOT_FOUND,
+                false,
+                HttpStatus::label(HTTPStatus::NOT_FOUND)
+            );
+            $response->end(json_encode($responseDTO->toArray()));
+            return $responseDTO;
         }
+
+        /**
+         * @var DefaultResponseDTO $result
+         */
         $result = $this->app->get($handler[0])->{$handler[1]}($request);
-        $response->status($result['code']);
-        dump($result);
-        $response->end(json_encode($result));
+        $response->status($result->getCode());
+        $response->end(json_encode($result->toArray()));
+        return $result;
     }
 }

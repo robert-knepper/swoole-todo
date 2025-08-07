@@ -2,6 +2,7 @@
 
 namespace App\Task\Application\Service;
 
+use App\Shared\HttpServer\Lib\Response\DefaultResponseDTO;
 use App\Shared\HttpServer\Lib\Response\HttpDefaultResponse;
 use App\Shared\HttpServer\Lib\Response\HttpStatus;
 use App\Task\Application\Port\TaskRepositoryPort;
@@ -18,7 +19,7 @@ class TaskService
     {
     }
 
-    public function createTask(Request $request)
+    public function createTask(Request $request) : DefaultResponseDTO
     {
         if (!TaskRequestValidator::isValidTitle($request->post['title'] ?? null))
             return $this->errorWithMessage('title is not valid', HttpStatus::BAD_REQUEST);
@@ -38,7 +39,7 @@ class TaskService
         return $this->successWithData($task->toArray(), HttpStatus::CREATED);
     }
 
-    public function getTask(Request $request)
+    public function getTask(Request $request) : DefaultResponseDTO
     {
         if (!TaskRequestValidator::isValidId($request->get['id'] ?? null))
             return $this->errorWithMessage('id param not valid', HttpStatus::BAD_REQUEST);
@@ -50,7 +51,7 @@ class TaskService
         return $this->successWithData($task->toArray());
     }
 
-    public function getAllTasks(Request $request)
+    public function getAllTasks(Request $request) : DefaultResponseDTO
     {
         $tasks = $this->taskRepositoryPort->all();
         return $this->successWithData($tasks);
@@ -64,7 +65,7 @@ class TaskService
         return $this->success();
     }
 
-    public function update(Request $request)
+    public function update(Request $request) : DefaultResponseDTO
     {
         // global validation
         if (!TaskRequestValidator::isValidId($request->post['id'] ?? null))

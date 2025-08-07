@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Shared\HttpServer\Lib;
 
+use App\Shared\HttpServer\Lib\Response\DefaultResponseDTO;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server;
@@ -26,7 +28,8 @@ class HttpServer
     {
         go(function () use ($request, $response): void {
             $this->requestLogger($request);
-            APP->getRouter()->dispatch($request, $response);
+            $this->responseLogger(APP->getRouter()->dispatch($request, $response));
+            $this->endLogger();
         });
     }
 
@@ -35,10 +38,19 @@ class HttpServer
         $this->server->start();
     }
 
-    private function requestLogger(Request $request) : void
+    private function requestLogger(Request $request): void
     {
         $uri = "{$request->server['request_method']} - {$request->server['request_uri']}";
-        dump($uri,$request->post,'','');
+        dump($uri, $request->post);
     }
 
+    private function responseLogger(DefaultResponseDTO $responseDTO): void
+    {
+        dump($responseDTO);
+    }
+
+    private function endLogger(): void
+    {
+        echo "-----------------------------------------\n";
+    }
 }
