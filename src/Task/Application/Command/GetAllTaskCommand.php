@@ -30,16 +30,14 @@ class GetAllTaskCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         \Co\run(function () use ($input, $output): void {
-            \go(function () use ($input, $output): void {
-                try {
-                    $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'), true);
-                    $result = $client->get('/task/all');
+            try {
+                $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'), true);
+                $result = $client->get('/task/all');
 
-                    $this->renderTasksTable($output, $result['data']);
-                } catch (ServerNotfoundException $exception) {
-                    $output->writeln($exception->getMessage());
-                }
-            });
+                $this->renderTasksTable($output, $result['data']);
+            } catch (ServerNotfoundException $exception) {
+                $output->writeln($exception->getMessage());
+            }
         });
         return Command::SUCCESS;
     }

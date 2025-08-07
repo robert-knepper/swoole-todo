@@ -5,6 +5,8 @@ namespace App\Task\Application\Command;
 use App\Shared\App\Lib\Console\BaseCommand;
 use App\Shared\HttpServer\Lib\Client\Exception\ServerNotfoundException;
 use App\Shared\HttpServer\Lib\Client\HttpClient;
+use App\Shared\HttpServer\Lib\Response\HttpStatus;
+use App\Task\Application\Command\Trait\TaskTableConsole;
 use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,6 +16,8 @@ use function Swoole\Coroutine\run;
 
 class GetTaskCommand extends BaseCommand
 {
+    use TaskTableConsole;
+
     protected function getSignature(): string
     {
         return 'task:get';
@@ -27,17 +31,19 @@ class GetTaskCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        \Co\run(function () use ($input): void {
-            \go(function () use ($input): void {
-                try {
-                    $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'));
-                    $result = $client->get('/task?id=' . $input->getArgument('id'));
-                    dump(json_decode($result, true));
 
-                } catch (ServerNotfoundException $exception) {
-                    dump($exception->getMessage());
-                }
-            });
+        \Swoole\Coroutine\run(function () use ($input, $output): void {
+            try {
+                $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'), true);
+                $result = $client->get('/task?id=' . $input->getArgument('id'));
+                if ($result['code'] === HttpStatus::OK)
+                    $this->renderTaskTable($output, $result);
+                else
+                    $output->writeln($result['message']);
+
+            } catch (ServerNotfoundException $exception) {
+                $output->writeln($exception->getMessage());
+            }
         });
         return Command::SUCCESS;
     }

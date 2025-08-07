@@ -36,26 +36,24 @@ class UpdateTaskCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         \Co\run(function () use ($input, $output): void {
-            \go(function () use ($input, $output): void {
-                try {
-                    $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'),true);
+            try {
+                $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'), true);
 
-                    $result = $client->post('/task/update', [
-                        'id' => $input->getArgument('id'),
-                        'title' => $input->getArgument('title'),
-                        'description' => $input->getArgument('description'),
-                        'isDone' => (int) $input->getArgument('isDone')
-                    ]);
+                $result = $client->post('/task/update', [
+                    'id' => $input->getArgument('id'),
+                    'title' => $input->getArgument('title'),
+                    'description' => $input->getArgument('description'),
+                    'isDone' => (int)$input->getArgument('isDone')
+                ]);
 
-                    if ($result['code'] === HttpStatus::OK)
-                        $output->writeln('updated');
-                    else
-                        $output->writeln('error '. $result['message']);
+                if ($result['code'] === HttpStatus::OK)
+                    $output->writeln('updated');
+                else
+                    $output->writeln('error ' . $result['message']);
 
-                } catch (\Exception $exception) {
-                    $output->writeln($exception->getMessage());
-                }
-            });
+            } catch (ServerNotfoundException $exception) {
+                $output->writeln($exception->getMessage());
+            }
         });
         return Command::SUCCESS;
     }

@@ -16,6 +16,7 @@ use function Swoole\Coroutine\run;
 class CreateTaskCommand extends BaseCommand
 {
     use TaskTableConsole;
+
     protected function getSignature(): string
     {
         return 'task:create';
@@ -31,19 +32,17 @@ class CreateTaskCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         \Co\run(function () use ($input, $output): void {
-            \go(function () use ($input, $output): void {
-                try {
-                    $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'),true);
-                    $result = $client->post('/task', [
-                        'title' => $input->getArgument('title'),
-                        'description' => $input->getArgument('description')
-                    ]);
+            try {
+                $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'), true);
+                $result = $client->post('/task', [
+                    'title' => $input->getArgument('title'),
+                    'description' => $input->getArgument('description')
+                ]);
 
-                    $this->renderTaskTable($output,$result['data']);
-                } catch (\Exception $exception) {
-                    $output->writeln($exception->getMessage());
-                }
-            });
+                $this->renderTaskTable($output, $result['data']);
+            } catch (\Exception $exception) {
+                $output->writeln($exception->getMessage());
+            }
         });
         return 0;
     }

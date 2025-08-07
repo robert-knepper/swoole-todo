@@ -28,17 +28,15 @@ class DeleteTaskCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         \Co\run(function () use ($input, $output): void {
-            \go(function () use ($input, $output): void {
-                try {
-                    $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'));
-                    $client->post('/task/delete', [
-                        'id' => $input->getArgument('id')
-                    ]);
-                    $output->writeln('deleted');
-                } catch (ServerNotfoundException $exception) {
-                    $output->writeln($exception->getMessage());
-                }
-            });
+            try {
+                $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'));
+                $client->post('/task/delete', [
+                    'id' => $input->getArgument('id')
+                ]);
+                $output->writeln('deleted');
+            } catch (ServerNotfoundException $exception) {
+                $output->writeln($exception->getMessage());
+            }
         });
         return Command::SUCCESS;
     }
