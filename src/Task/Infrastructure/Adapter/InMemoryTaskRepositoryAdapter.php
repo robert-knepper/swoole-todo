@@ -22,4 +22,24 @@ class InMemoryTaskRepositoryAdapter implements TaskRepositoryPort {
     {
         return $this->tasks;
     }
+
+    public function truncate(): void
+    {
+        $this->tasks = [];
+    }
+
+    public function remove(int $id): void
+    {
+        unset($this->tasks[$id]);
+    }
+
+    public function count(): int
+    {
+        return count($this->tasks);
+    }
+
+    public function update(Task $task): void
+    {
+        $this->tasks[$task->id] = $task;
+    }
 }

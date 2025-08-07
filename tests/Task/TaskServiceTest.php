@@ -105,4 +105,81 @@ class TaskServiceTest extends TestCase
             $this->assertEquals('foo', $tasks[0]->title);
         });
     }
+
+    public function test_delete_task()
+    {
+        $this->runTestOnCoroutine(function () {
+            /**
+             * @var TaskService $service
+             */
+            $service = APP->get(TaskService::class);
+            $request = new Request();
+
+            $request->post = [
+                'title' => "foo",
+                'description' => "bar",
+            ];
+            $result = $service->createTask($request);
+            $task = $result['data'];
+
+            $request->get = [
+                'id' => $task['id'],
+            ];
+            $result = $service->getTask($request);
+            $this->assertEquals(HttpStatus::OK, $result['code']);
+
+            $request->post = [
+                'id' => $task['id'],
+            ];
+            $result = $service->delete($request);
+            $this->assertEquals(HttpStatus::OK, $result['code']);
+
+            $request->get = [
+                'id' => $task['id'],
+            ];
+            $result = $service->getTask($request);
+            $this->assertEquals(HttpStatus::NOT_FOUND, $result['code']);
+        });
+    }
+
+
+
+    public function test_update_task()
+    {
+        $this->runTestOnCoroutine(function () {
+            /**
+             * @var TaskService $service
+             */
+            $service = APP->get(TaskService::class);
+            $request = new Request();
+
+
+            // create task
+            $request->post = [
+                'title' => "foo",
+                'description' => "bar",
+            ];
+            $result = $service->createTask($request);
+            $task = $result['data'];
+            $task['title'] = "baz";
+            $task['description'] = "qux";
+            $task['isDone'] = true;
+
+            $request->post = $task;
+            $result = $service->update($request);
+            $this->assertEquals(HttpStatus::OK, $result['code']);
+            $this->assertEquals('baz', $result['data']['title']);
+
+            $request->get = [
+                'id' => $task['id'],
+            ];
+            $result = $service->getTask($request);
+
+
+            $this->assertEquals(HttpStatus::OK, $result['code']);
+            $this->assertEquals('baz', $result['data']['title']);
+            $this->assertEquals('qux', $result['data']['description']);
+            $this->assertTrue($result['data']['isDone']);
+        });
+    }
 }

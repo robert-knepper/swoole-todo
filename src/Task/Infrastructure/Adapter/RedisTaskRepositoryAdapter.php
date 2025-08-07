@@ -51,4 +51,43 @@ class RedisTaskRepositoryAdapter implements TaskRepositoryPort
 
         return $tasks;
     }
+
+    public function truncate(): void
+    {
+        $redis = $this->redisPool->get();
+
+        $keys = $redis->keys('tasks.*');
+        if (!empty($keys)) {
+            $redis->del(...$keys);
+        }
+
+        $this->redisPool->put($redis);
+    }
+
+    public function remove(int $id): void
+    {
+        $redis = $this->redisPool->get();
+
+        $key = 'tasks.' . $id;
+        $redis->del($key);
+
+        $this->redisPool->put($redis);
+    }
+
+    public function count(): int
+    {
+        $redis = $this->redisPool->get();
+
+        $keys = $redis->keys('tasks.*');
+        $count = is_array($keys) ? count($keys) : 0;
+
+        $this->redisPool->put($redis);
+
+        return $count;
+    }
+
+    public function update(Task $task): void
+    {
+        $this->save($task);
+    }
 }

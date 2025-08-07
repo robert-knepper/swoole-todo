@@ -7,11 +7,11 @@ use App\Task\Infrastructure\Mtproto\TL_task_Task;
 class Task
 {
     public function __construct(
-        public readonly int    $id,
-        public readonly string $title,
-        public readonly string $description,
-        public readonly bool   $isDone,
-        public readonly int    $createdAt,
+        public int    $id,
+        public string $title,
+        public string $description,
+        public bool   $isDone,
+        public int    $createdAt,
     )
     {
     }

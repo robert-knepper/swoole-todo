@@ -8,6 +8,7 @@ use App\Shared\HttpServer\Lib\Router;
 use App\Shared\Mtproto\TLClassStore;
 use App\Shared\Mtproto\TLObject;
 use App\Task\Application\Command\CreateTaskCommand;
+use App\Task\Application\Command\DeleteTaskCommand;
 use App\Task\Application\Command\GetAllTaskCommand;
 use App\Task\Application\Command\GetTaskCommand;
 use App\Task\Application\Service\TaskService;
@@ -33,6 +34,7 @@ class TaskServiceProvider extends BaseServiceProvider
         $this->container->registerCommand()->add(CreateTaskCommand::class);
         $this->container->registerCommand()->add(GetTaskCommand::class);
         $this->container->registerCommand()->add(GetAllTaskCommand::class);
+        $this->container->registerCommand()->add(DeleteTaskCommand::class);
     }
 
     private function registerService() : void
@@ -50,6 +52,8 @@ class TaskServiceProvider extends BaseServiceProvider
         $router->add('POST', '/task', [TaskService::class,'createTask']);
         $router->add('GET', '/task', [TaskService::class,'getTask']);
         $router->add('GET', '/task/all', [TaskService::class,'getAllTasks']);
+        $router->add('POST', '/task/delete', [TaskService::class,'delete']);
+        $router->add('POST', '/task/update', [TaskService::class,'update']);
     }
 
 }

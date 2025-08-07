@@ -5,10 +5,10 @@ namespace App\Task\Application\Service;
 use App\Shared\HttpServer\Lib\Response\HttpDefaultResponse;
 use App\Shared\HttpServer\Lib\Response\HttpStatus;
 use App\Task\Application\Port\TaskRepositoryPort;
+use App\Task\Application\Validation\TaskRequestValidator;
 use App\Task\Domain\Task;
 use App\User\Application\Dto\UserDto;
 use Swoole\Http\Request;
-use Swoole\Http\Response;
 
 class TaskService
 {
@@ -20,16 +20,10 @@ class TaskService
 
     public function createTask(Request $request)
     {
-        if (!(isset($request->post['title'])
-            && is_string($request->post['title'])
-            && strlen($request->post['title']) < 150
-            && strlen($request->post['title']) != 0))
+        if (!TaskRequestValidator::isValidTitle($request->post['title'] ?? null))
             return $this->errorWithMessage('title is not valid', HttpStatus::BAD_REQUEST);
 
-        if (!(isset($request->post['description'])
-            && is_string($request->post['description'])
-            && strlen($request->post['description']) < 500
-            && strlen($request->post['description']) != 0))
+        if (!TaskRequestValidator::isValidDescription($request->post['description'] ?? null))
             return $this->errorWithMessage('description is not valid', HttpStatus::BAD_REQUEST);
 
         $task = new Task(
@@ -46,7 +40,7 @@ class TaskService
 
     public function getTask(Request $request)
     {
-        if (!(isset($request->get['id']) && is_numeric($request->get['id'])))
+        if (!TaskRequestValidator::isValidId($request->get['id'] ?? null))
             return $this->errorWithMessage('id param not valid', HttpStatus::BAD_REQUEST);
 
         $task = $this->taskRepositoryPort->findById($request->get['id']);
@@ -60,5 +54,42 @@ class TaskService
     {
         $tasks = $this->taskRepositoryPort->all();
         return $this->successWithData($tasks);
+    }
+
+    public function delete(Request $request)
+    {
+        if (!TaskRequestValidator::isValidId($request->post['id'] ?? null))
+            return $this->errorWithMessage('id param not valid', HttpStatus::BAD_REQUEST);
+        $this->taskRepositoryPort->remove($request->post['id']);
+        return $this->success();
+    }
+
+    public function update(Request $request)
+    {
+        // global validation
+        if (!TaskRequestValidator::isValidId($request->post['id'] ?? null))
+            return $this->errorWithMessage('id param not valid', HttpStatus::BAD_REQUEST);
+
+        if (!TaskRequestValidator::isValidTitle($request->post['title'] ?? null))
+            return $this->errorWithMessage('title is not valid', HttpStatus::BAD_REQUEST);
+
+        if (!TaskRequestValidator::isValidDescription($request->post['description'] ?? null))
+            return $this->errorWithMessage('description is not valid', HttpStatus::BAD_REQUEST);
+
+        if (!TaskRequestValidator::isValidIsDone($request->post['isDone'] ?? null))
+            return $this->errorWithMessage('isDone is not valid', HttpStatus::BAD_REQUEST);
+
+        // find validation
+        $task = $this->taskRepositoryPort->findById($request->post['id']);
+
+        if ($task === null)
+            return $this->errorWithMessage('task not found', HttpStatus::NOT_FOUND);
+
+        // update
+        $task->title = $request->post['title'];
+        $task->description = $request->post['description'];
+        $task->isDone = $request->post['isDone'];
+        $this->taskRepositoryPort->update($task);
+        return $this->successWithData($task->toArray());
     }
 }
