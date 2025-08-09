@@ -22,7 +22,7 @@ class RedisServiceProvider extends BaseServiceProvider
         $db = env('REDIS_DB_NUM', 0);
 
         $pool = RedisPoolMaker::make($host, $port, $pass, $db);
-        $this->container->bind(RedisPool::class, $pool);
+        $this->container->singleton(RedisPool::class, $pool);
     }
 
 }

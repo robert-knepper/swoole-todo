@@ -41,12 +41,12 @@ class TaskServiceProvider extends BaseServiceProvider
 
     private function registerService() : void
     {
-        $this->container->bind(InMemoryTaskRepositoryAdapter::class, new InMemoryTaskRepositoryAdapter());
-        $this->container->bind(
+        $this->container->singleton(InMemoryTaskRepositoryAdapter::class, new InMemoryTaskRepositoryAdapter());
+        $this->container->singleton(
             RedisTaskRepositoryAdapter::class,
             new RedisTaskRepositoryAdapter($this->container->get(RedisPool::class))
         );
-        $this->container->bind(TaskService::class, new TaskService($this->container->get(RedisTaskRepositoryAdapter::class)));
+        $this->container->singleton(TaskService::class, new TaskService($this->container->get(RedisTaskRepositoryAdapter::class)));
     }
 
     private function registerRoutes(Router $router) : void

@@ -9,10 +9,10 @@ class ConfigManager
     public function __construct(string $defaultConfigPath)
     {
         $this->configByPrefix = [];
-        $this->registerConfig($defaultConfigPath,'default');
+        $this->registerConfig('default', $defaultConfigPath);
     }
 
-    public function registerConfig($configPath, string $prefix): void
+    public function registerConfig(string $prefix, string $configPath): void
     {
         $this->configByPrefix[$prefix] = require_once $configPath;
     }

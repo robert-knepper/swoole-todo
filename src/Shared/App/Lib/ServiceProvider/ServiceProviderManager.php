@@ -14,14 +14,15 @@ class ServiceProviderManager
         $this->providers[] = $provider;
     }
 
-    public function run(): void
+    public function runRegister(): void
     {
-        // register
         foreach ($this->providers as $provider) {
             $provider->register();
         }
+    }
 
-        // boot
+    public function runBoot(): void
+    {
         foreach ($this->providers as $provider) {
             $provider->boot();
         }
