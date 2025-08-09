@@ -2,9 +2,10 @@
 
 namespace App\Task\Domain;
 
+use App\Shared\HttpServer\Lib\Response\Arrayable;
 use App\Task\Infrastructure\Mtproto\TL_task_Task;
 
-class Task
+class Task implements Arrayable
 {
     public function __construct(
         public int    $id,

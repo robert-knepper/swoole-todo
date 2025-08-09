@@ -49,6 +49,7 @@ class FileLoggerDriver extends Logger
     {
         // todo : check log size if > 5M --> change name [app.log] to [archive.date.app.log]
         // todo : if count file > 20 --> remove old log archive
+        throw new \Exception("Not implemented");
     }
 
 }
