@@ -4,14 +4,8 @@
 require_once __DIR__ . "/../vendor/autoload.php";
 $providers = (require __DIR__ . '/../src/Shared/App/config.php')['providers'];
 
-// env
-$envName = isset($envName) ? $envName : null; // override while test run
-$dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/../',$envName);
-$dotenv->load();
-
-
 // register modules
-const APP = new \App\Shared\App\Lib\App();
+const APP = new \App\Shared\App\Lib\App(__DIR__ . '/../');
 foreach ($providers as $provider) {
     APP->registerServiceProvider(new $provider(APP));
 }
