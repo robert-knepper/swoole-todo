@@ -11,6 +11,9 @@ foreach ($providers as $provider) {
 }
 
 // boot modules
-APP->boot();
+Swoole\Runtime::enableCoroutine(true);
+Co\run(function () {
+    APP->boot();
+});
 
-unset($providers,$envName);
+unset($providers, $envName);

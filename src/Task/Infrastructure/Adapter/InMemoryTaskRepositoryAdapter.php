@@ -10,6 +10,7 @@ class InMemoryTaskRepositoryAdapter implements TaskRepositoryPort {
 
     public function save(Task $task): void
     {
+        $task->id = rand(1200, 90000);
         $this->tasks[$task->id] = $task;
     }
 

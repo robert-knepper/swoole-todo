@@ -27,7 +27,7 @@ class TaskService
             return $this->errorWithMessage('description is not valid', HttpStatus::BAD_REQUEST);
 
         $task = new Task(
-            rand(1200, 90000),
+            -1,
             $request->post['title'] ?? '',
             $request->post['description'] ?? '',
             false,

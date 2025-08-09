@@ -4,21 +4,39 @@ namespace App\Task\Infrastructure\Adapter;
 
 use App\Task\Application\Port\TaskRepositoryPort;
 use App\Task\Domain\Task;
+use Swoole\Coroutine\Redis;
 use Swoole\Database\RedisPool;
 
 class RedisTaskRepositoryAdapter implements TaskRepositoryPort
 {
+    private const USER_ID_KEY = 'user_id';
 
-    public function __construct(private RedisPool $redisPool)
+    public function __construct(private RedisPool $redisPool,private int $exTimeBySecond = 200)
     {
+        $this->ensureExistId();
+    }
+
+    private function ensureExistId(): void
+    {
+        /**
+         * @var Redis $redis
+         */
+        $redis = $this->redisPool->get();
+        $id = $redis->get(self::USER_ID_KEY);
+        if (!is_numeric($id)) {
+            $redis->set(self::USER_ID_KEY, '0');
+        }
     }
 
     public function save(Task $task): void
     {
+        /**
+         * @var Redis $redis
+         */
         $redis = $this->redisPool->get();
-
+        $task->id = $redis->incr(self::USER_ID_KEY);
         $key = 'tasks.' . $task->id;
-        $redis->set($key, json_encode($task), ['EX' => 200]); // by seconds.
+        $redis->set($key, json_encode($task), ['EX' => $this->exTimeBySecond]);
         $this->redisPool->put($redis);
         $this->tasks[$task->id] = $task;
     }
@@ -29,7 +47,7 @@ class RedisTaskRepositoryAdapter implements TaskRepositoryPort
         $key = 'tasks.' . $id;
         $itemStr = $redis->get($key);
         $this->redisPool->put($redis);
-        return $itemStr ? Task::makeFromArr(json_decode($itemStr,true)) : null ;
+        return $itemStr ? Task::makeFromArr(json_decode($itemStr, true)) : null;
     }
 
     public function all(): array
@@ -87,6 +105,13 @@ class RedisTaskRepositoryAdapter implements TaskRepositoryPort
 
     public function update(Task $task): void
     {
-        $this->save($task);
+        /**
+         * @var Redis $redis
+         */
+        $redis = $this->redisPool->get();
+        $key = 'tasks.' . $task->id;
+        $redis->set($key, json_encode($task), ['EX' => $this->exTimeBySecond]);
+        $this->redisPool->put($redis);
+        $this->tasks[$task->id] = $task;
     }
 }
