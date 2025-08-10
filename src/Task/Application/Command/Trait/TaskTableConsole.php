@@ -2,6 +2,7 @@
 
 namespace App\Task\Application\Command\Trait;
 
+use App\Task\Domain\Task;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -30,12 +31,9 @@ trait TaskTableConsole
         $headers = array_keys(array_values($tasks)[0]);
 
         $rows = array_map(function ($task) {
-            // cast bool value
-            return array_map(function ($value) {
-                if (is_bool($value))
-                    return $value ? '✅' : '❌';
-                return $value;
-            }, $task);
+            $task['isDone'] = $task['isDone'] ? '✅' : '❌';
+            $task['createdAt'] = date('Y-m-d H:i:s', $task['createdAt']);
+            return $task;
         }, $tasks);
 
         $table = new Table($output);
