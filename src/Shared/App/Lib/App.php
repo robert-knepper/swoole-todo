@@ -47,11 +47,25 @@ class App
         $this->registry[$key] = $value;
     }
 
+    /**
+     * When you think this object might never be instantiated during the program’s runtime, and you don’t want unnecessary objects to be created and stored in memory, you can use this method.
+     * It allows you to pass a closure so that an object is created from it only when needed.
+     * @param string $key
+     * @param callable $value
+     * @return void
+     */
     public function lazyBind(string $key, callable $value): void
     {
         $this->lazyRegistry[$key] = $value;
     }
 
+    /**
+     * Use this function when you know it’s the first time you’re going to receive a lazyBind and it needs to be checked — if it doesn’t exist, the object should be created.
+     * However, in places where you’re 100% sure the object has already been created, use get method.
+     * The goal was to remove an extra if inside get method.
+     * @param string $key
+     * @return object
+     */
     public function lazyGet(string $key): object
     {
         if (!isset($this->registry[$key])) {
