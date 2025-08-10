@@ -12,7 +12,7 @@ class FileLoggerDriver extends Logger
 
     function __construct()
     {
-        $this->logFilePath = storage_path() . config('log_dir', 'log') . '/app.log';
+        $this->logFilePath = storage_path() . config('log', 'log_dir') . '/app.log';
         $this->ensureExistDir();
         register_shutdown_function([$this, 'flush']);
     }

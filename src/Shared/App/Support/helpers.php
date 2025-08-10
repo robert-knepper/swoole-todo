@@ -8,7 +8,7 @@ if (!function_exists('app')) {
 }
 
 if (!function_exists('config')) {
-    function config(string $key, string $prefix = 'default'): mixed
+    function config(string $prefix, string $key): mixed
     {
         return APP->getConfigManager()->get($key, $prefix);
     }

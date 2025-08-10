@@ -22,7 +22,7 @@ class LogServiceProvider extends BaseServiceProvider
             return new MemoryLoggerDriver();
         });
 
-        app()->singleton('logger', app()->lazyGet(config('driver','log')));
+        app()->singleton('logger', app()->lazyGet(config('log', 'driver')));
     }
 
 }
