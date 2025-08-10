@@ -9,7 +9,13 @@ class AppServiceProvider extends BaseServiceProvider
 
     public function register(): void
     {
-        APP->registerHelperFunction()->loadFilePath(__DIR__ . '/../../Support/helpers.php');
+        $this->container
+            ->registerHelperFunction()
+            ->loadFilePath(__DIR__ . '/../../Support/helpers.php');
+
+        $this->container
+            ->getConfigManager()
+            ->registerConfig('app',__DIR__ . '/../../config.php');
     }
 
 }

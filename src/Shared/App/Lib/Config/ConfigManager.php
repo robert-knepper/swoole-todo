@@ -14,7 +14,7 @@ class ConfigManager
 
     public function registerConfig(string $prefix, string $configPath): void
     {
-        $this->configByPrefix[$prefix] = require_once $configPath;
+        $this->configByPrefix[$prefix] = require $configPath;
     }
 
     public function get(string $key, string $prefix = 'default'): mixed
