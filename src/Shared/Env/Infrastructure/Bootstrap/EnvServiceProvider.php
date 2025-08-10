@@ -10,7 +10,7 @@ class EnvServiceProvider extends BaseServiceProvider
     public function register(): void
     {
         $envName = isset($envName) ? $envName : null; // override while test run
-        $dotenv = \Dotenv\Dotenv::createImmutable(root_path() . '/',$envName);
+        $dotenv = \Dotenv\Dotenv::createImmutable(APP->getRootPath() . '/',$envName);
         $dotenv->load();
     }
 
