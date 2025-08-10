@@ -27,7 +27,7 @@ trait TaskTableConsole
             return;
         }
 
-        $headers = array_keys($tasks[0]);
+        $headers = array_keys(array_values($tasks)[0]);
 
         $rows = array_map(function ($task) {
             // cast bool value

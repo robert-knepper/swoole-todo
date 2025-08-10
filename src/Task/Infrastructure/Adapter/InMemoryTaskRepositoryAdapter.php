@@ -21,7 +21,7 @@ class InMemoryTaskRepositoryAdapter implements TaskRepositoryPort {
 
     public function all(): array
     {
-        return $this->tasks;
+        return array_values($this->tasks);
     }
 
     public function truncate(): void

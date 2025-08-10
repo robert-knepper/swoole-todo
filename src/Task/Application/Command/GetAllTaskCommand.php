@@ -5,6 +5,7 @@ namespace App\Task\Application\Command;
 use App\Shared\App\Lib\Console\BaseCommand;
 use App\Shared\HttpServer\Lib\Client\Exception\ServerNotfoundException;
 use App\Shared\HttpServer\Lib\Client\HttpClient;
+use App\Shared\HttpServer\Lib\Response\DefaultResponseDTO;
 use App\Task\Application\Command\Trait\TaskTableConsole;
 use Swoole\Runtime;
 use Symfony\Component\Console\Command\Command;
@@ -33,8 +34,16 @@ class GetAllTaskCommand extends BaseCommand
             try {
                 $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'), true);
                 $result = $client->get('/task/all');
-
-                $this->renderTasksTable($output, $result['data']);
+                if (!$result) {
+                    $output->writeln('server not found');
+                    return;
+                }
+                $result = new DefaultResponseDTO(...$result);
+                if (count($result->getData()) === 0) {
+                    $output->writeln('tasks is empty');
+                    return;
+                }
+                $this->renderTasksTable($output, $result->getData());
             } catch (ServerNotfoundException $exception) {
                 $output->writeln($exception->getMessage());
             }
