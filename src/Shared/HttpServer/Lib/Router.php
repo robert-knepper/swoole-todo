@@ -46,7 +46,7 @@ class Router
                 [],
                 HTTPStatus::NOT_FOUND,
                 false,
-                HttpStatus::label(HTTPStatus::NOT_FOUND)
+                'url not found'
             );
             $response->end(json_encode($responseDTO->toArray()));
             return $responseDTO;

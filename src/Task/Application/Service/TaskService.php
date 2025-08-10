@@ -95,4 +95,25 @@ class TaskService
         $this->taskRepositoryPort->update($task);
         return $this->successWithData($task->toArray());
     }
+
+    public function updateIsDone(Request $request): DefaultResponseDTO
+    {
+        // global validation
+        if (!TaskRequestValidator::isValidId($request->post['id'] ?? null))
+            return $this->errorWithMessage('id param not valid', HttpStatus::BAD_REQUEST);
+
+        if (!TaskRequestValidator::isValidIsDone($request->post['isDone'] ?? null))
+            return $this->errorWithMessage('isDone is not valid', HttpStatus::BAD_REQUEST);
+
+        // find validation
+        $task = $this->taskRepositoryPort->findById($request->post['id']);
+
+        if ($task === null)
+            return $this->errorWithMessage('task not found', HttpStatus::NOT_FOUND);
+
+        // update
+        $task->isDone = (bool)$request->post['isDone'];
+        $this->taskRepositoryPort->update($task);
+        return $this->successWithData($task->toArray());
+    }
 }

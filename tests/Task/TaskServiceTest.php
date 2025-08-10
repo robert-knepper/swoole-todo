@@ -182,4 +182,30 @@ class TaskServiceTest extends TestCase
             $this->assertTrue($result->getData()['isDone']);
         });
     }
+
+    public function test_update_is_done_task()
+    {
+        $this->runTestOnCoroutine(function () {
+            /**
+             * @var TaskService $service
+             */
+            $service = APP->get(TaskService::class);
+            $request = new Request();
+
+
+            // create task
+            $request->post = [
+                'title' => "foo",
+                'description' => "bar",
+            ];
+            $result = $service->createTask($request);
+            $task = $result->getData();
+            $task['isDone'] = 1;
+
+            $request->post = $task;
+            $result = $service->updateIsDone($request);
+            $this->assertEquals(HttpStatus::OK, $result->getCode());
+            $this->assertEquals(1, $result->getData()['isDone']);
+        });
+    }
 }

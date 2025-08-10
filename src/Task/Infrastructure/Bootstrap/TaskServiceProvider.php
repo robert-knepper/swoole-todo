@@ -8,6 +8,7 @@ use App\Task\Application\Command\CreateTaskCommand;
 use App\Task\Application\Command\DeleteTaskCommand;
 use App\Task\Application\Command\GetAllTaskCommand;
 use App\Task\Application\Command\GetTaskCommand;
+use App\Task\Application\Command\UpdateIsDoneTaskCommand;
 use App\Task\Application\Command\UpdateTaskCommand;
 use App\Task\Application\Port\TaskRepositoryPort;
 use App\Task\Application\Service\TaskService;
@@ -31,6 +32,7 @@ class TaskServiceProvider extends BaseServiceProvider
         $this->container->registerCommand()->add(GetAllTaskCommand::class);
         $this->container->registerCommand()->add(DeleteTaskCommand::class);
         $this->container->registerCommand()->add(UpdateTaskCommand::class);
+        $this->container->registerCommand()->add(UpdateIsDoneTaskCommand::class);
     }
 
     private function registerService(): void
@@ -64,6 +66,7 @@ class TaskServiceProvider extends BaseServiceProvider
         $router->add('GET', '/task/all', [TaskService::class, 'getAllTasks']);
         $router->add('POST', '/task/delete', [TaskService::class, 'delete']);
         $router->add('POST', '/task/update', [TaskService::class, 'update']);
+        $router->add('POST', '/task/update-is-done', [TaskService::class, 'updateIsDone']);
     }
 
 }
