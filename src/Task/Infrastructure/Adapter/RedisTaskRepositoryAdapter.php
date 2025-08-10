@@ -11,7 +11,7 @@ class RedisTaskRepositoryAdapter implements TaskRepositoryPort
 {
     private const USER_ID_KEY = 'user_id';
 
-    public function __construct(private RedisPool $redisPool,private int $exTimeBySecond = 200)
+    public function __construct(private RedisPool $redisPool)
     {
         $this->ensureExistId();
     }
@@ -36,7 +36,7 @@ class RedisTaskRepositoryAdapter implements TaskRepositoryPort
         $redis = $this->redisPool->get();
         $task->id = $redis->incr(self::USER_ID_KEY);
         $key = 'tasks.' . $task->id;
-        $redis->set($key, json_encode($task), ['EX' => $this->exTimeBySecond]);
+        $redis->set($key, json_encode($task));
         $this->redisPool->put($redis);
         $this->tasks[$task->id] = $task;
     }
@@ -115,7 +115,7 @@ class RedisTaskRepositoryAdapter implements TaskRepositoryPort
          */
         $redis = $this->redisPool->get();
         $key = 'tasks.' . $task->id;
-        $redis->set($key, json_encode($task), ['EX' => $this->exTimeBySecond]);
+        $redis->set($key, json_encode($task));
         $this->redisPool->put($redis);
         $this->tasks[$task->id] = $task;
     }
