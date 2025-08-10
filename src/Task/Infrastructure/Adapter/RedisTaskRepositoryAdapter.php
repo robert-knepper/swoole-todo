@@ -54,13 +54,18 @@ class RedisTaskRepositoryAdapter implements TaskRepositoryPort
     {
         $redis = $this->redisPool->get();
 
-        $tasks = [];
         $keys = $redis->keys('tasks.*');
+        if (empty($keys)) {
+            $this->redisPool->put($redis);
+            return [];
+        }
 
-        foreach ($keys as $key) {
-            $itemStr = $redis->get($key);
-            if ($itemStr !== null) {
-                $tasks[] = Task::makeFromArr(json_decode($itemStr, true));
+        $values = $redis->mGet($keys);
+
+        $tasks = [];
+        foreach ($values as $value) {
+            if ($value) {
+                $tasks[] = Task::makeFromArr(json_decode($value, true));
             }
         }
 

@@ -26,6 +26,9 @@ class TaskService
         if (!TaskRequestValidator::isValidDescription($request->post['description'] ?? null))
             return $this->errorWithMessage('description is not valid', HttpStatus::BAD_REQUEST);
 
+        if ($this->taskRepositoryPort->count() >= 50)
+            return $this->errorWithMessage('The number of TASK created is more than 50, it is not possible to create more.', HttpStatus::UNPROCESSABLE_ENTITY);
+
         $task = new Task(
             -1,
             $request->post['title'] ?? '',
