@@ -29,7 +29,9 @@ class HttpServer
         go(function () use ($request, $response): void {
             $this->requestLogger($request);
             try {
-                $this->responseLogger(APP->getRouter()->dispatch($request, $response));
+                $this->responseLogger(
+                    APP->getRouter()->dispatch($request, $response)
+                );
             } catch (\Exception $exception) {
                 logger()->error($exception->getMessage());
                 throw $exception;
