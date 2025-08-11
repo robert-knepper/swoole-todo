@@ -1,6 +1,8 @@
 
 # TODO Http Server Swoole
 
+<img src="doc/img/demo.png">
+
 This application allows you to run an HTTP server using Swoole with TODO services.
 It also gives you the option to call these services via CLI if you don’t have a frontend, so you can still use the program without a UI.
 <br>

@@ -36,8 +36,9 @@ class GetTaskCommand extends BaseCommand
             try {
                 $client = new HttpClient(env('HTTP_HOST'), env('HTTP_PORT'), true);
                 $result = $client->get('/task?id=' . $input->getArgument('id'));
+
                 if ($result['code'] === HttpStatus::OK)
-                    $this->renderTaskTable($output, $result);
+                    $this->renderTaskTable($output, $result['data']);
                 else
                     $output->writeln($result['message']);
 
