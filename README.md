@@ -51,6 +51,7 @@ todo http-server:route-list
 ![Route List](doc/img/route-list.png)
 
 You can either use these services directly or run the CLI commands:
+
 ![Route List](doc/img/task-commands.png)
 
 
@@ -211,3 +212,8 @@ Improves flexibility and testability by decoupling dependencies.
 
 7) حالا از این به بعد شما در سرور خود به این روت دسترسی دارید، می تونید براش کامند هم تعریف کنید در مسیر Task/Application/Command می تونید کامند های مشابه رو ببینید
 8) در مسیر tests/Task تست هارو ببینید و مشابه اون ها برای ماژول خود تست بنویسید
+
+
+## Other Readmes
+
+- [Git Strategy](doc/git-strategy.md)
