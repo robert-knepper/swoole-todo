@@ -17,7 +17,7 @@ class StartServerCommand extends BaseCommand
 
     protected function configure()
     {
-        $this->setDescription('show all registered routes');
+        $this->setDescription('start http server on ' . env('HTTP_HOST') . ':' . env('HTTP_PORT'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
