@@ -14,9 +14,8 @@
         }
     ],
     "require": {
+        "php": "^8.3",
         "larapack/dd": "^1.1",
-        "illuminate/database": "*",
-        "illuminate/events": "*",
         "vlucas/phpdotenv": "^5.6",
         "swoft/swoole-ide-helper": "^4.4",
         "symfony/console": "^7.3"
